@@ -24,5 +24,5 @@ runs:
       run: npm ci
       shell: bash
     - name: print logs
-      run: echo "{{inputs.logs}}"
+      run: echo ${{inputs.logs}}
       shell: bash
