@@ -9,6 +9,10 @@ inputs:
     description: "logs for tests"
     required: false
     default: "ofir"
+outputs:
+  used-cache:
+    description: "whether the cache was used."
+    value: ${{steps.install.outputs.cache}}
 runs:
   using: composite
   steps:
@@ -21,7 +25,9 @@ runs:
         key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true' || inputs.caching != 'true'
-      run: npm ci
+      run: |
+        npm ci
+        echo "cache='${{input.caching}}'" >> $GITHUB_OUTPUT
       shell: bash
     - name: print logs
       run: echo ${{inputs.logs}}
