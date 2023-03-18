@@ -14,6 +14,9 @@ function run() {
   const s3Uri = `s3://${bucket}`;
 
   exec.exec(`aws s3 sync ${distFolder} ${s3Uri} --region ${bucketRegion}`); //will authenticate with AWS_ACCESS_KEY_ID & AWS_SECRET_ACCESS_KEY
+
+  const websiteUrl = `http://${bucket}.s3-website-${bucketRegion}.amazonaws.com`;
+  core.setOutput("website-url", websiteUrl);
 }
 
 run();
