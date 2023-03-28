@@ -53,6 +53,11 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      AWS_REGION: us-east-1
     steps:
       - name: Get code
         uses: actions/checkout@v3
@@ -63,16 +68,21 @@ jobs:
           path: ./dist
       - name: Output contents
         run: ls
+      - name: Get AWS Permission
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::262770822872:oidc-provider/token.actions.githubusercontent.com
+          aws-region: ${{ env.AWS_REGION }}
       - name: Deploy site
         id: deploy
         # uses: ./.github/actions/deploy-s3-javascript #deploy by JS
         uses: ./.github/actions/deploy-s3-docker #deploy by docker
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        # env: #replaced by OpenID-AWS
+        #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         with:
           bucket: ofir-gha-custom-action-hosting
-          bucket-region: us-east-1
+          bucket-region: ${{ env.AWS_REGION }}
           dist-folder: ./dist
       - name: Output website URL
         run: |
