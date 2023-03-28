@@ -51,11 +51,11 @@ jobs:
           name: dist-files
           path: dist
   deploy:
-    needs: build
-    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+    needs: build
+    runs-on: ubuntu-latest
     env:
       AWS_REGION: us-east-1
     steps:
@@ -71,7 +71,7 @@ jobs:
       - name: Get AWS Permission
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::262770822872:oidc-provider/token.actions.githubusercontent.com
+          role-to-assume: arn:aws:iam::262770822872:role/gha-demo
           aws-region: ${{ env.AWS_REGION }}
       - name: Deploy site
         id: deploy
